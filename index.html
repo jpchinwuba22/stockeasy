@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StockEasy — Smart Business Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --surface2: #1c2030;
+    --border: #252a3a;
+    --accent: #00c896;
+    --accent2: #0084ff;
+    --danger: #ff4f4f;
+    --warn: #ffb020;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --card: #181c28;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+    padding: 0 20px 28px;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { color: var(--text); }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .nav-item:hover { color: var(--text); background: var(--surface2); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,200,150,0.06); }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 32px;
+    min-height: 100vh;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 28px;
+  }
+
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .page-header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
+
+  /* CARDS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; margin: 8px 0 4px; }
+  .stat-sub { font-size: 12px; color: var(--muted); }
+  .stat-card.green .stat-value { color: var(--accent); }
+  .stat-card.blue .stat-value { color: var(--accent2); }
+  .stat-card.warn .stat-value { color: var(--warn); }
+  .stat-card.danger .stat-value { color: var(--danger); }
+
+  /* GRID LAYOUT */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* PANEL */
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .panel-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* BUTTONS */
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #00b085; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); }
+  .btn-danger { background: rgba(255,79,79,0.15); color: var(--danger); border: 1px solid rgba(255,79,79,0.3); }
+  .btn-danger:hover { background: rgba(255,79,79,0.25); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  /* FORM */
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+
+  input, select, textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+  td { padding: 12px; border-bottom: 1px solid rgba(37,42,58,0.5); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .badge-green { background: rgba(0,200,150,0.15); color: var(--accent); }
+  .badge-warn { background: rgba(255,176,32,0.15); color: var(--warn); }
+  .badge-danger { background: rgba(255,79,79,0.15); color: var(--danger); }
+  .badge-blue { background: rgba(0,132,255,0.15); color: var(--accent2); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 480px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* CART */
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .cart-qty {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .qty-btn {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* CHART */
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 120px;
+    padding-top: 10px;
+  }
+
+  .chart-bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .chart-bar {
+    width: 100%;
+    background: linear-gradient(180deg, var(--accent), rgba(0,200,150,0.3));
+    border-radius: 4px 4px 0 0;
+    transition: height 0.5s ease;
+    min-height: 4px;
+  }
+
+  .chart-label { font-size: 10px; color: var(--muted); }
+
+  /* ALERT */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    border-left: 3px solid;
+  }
+
+  .alert-warn { background: rgba(255,176,32,0.1); border-color: var(--warn); color: var(--warn); }
+  .alert-danger { background: rgba(255,79,79,0.1); border-color: var(--danger); color: var(--danger); }
+
+  /* STACY */
+  .stacy-chat {
+    height: 320px;
+    overflow-y: auto;
+    padding: 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stacy-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .stacy-msg.bot {
+    background: rgba(0,200,150,0.1);
+    border: 1px solid rgba(0,200,150,0.2);
+    align-self: flex-start;
+  }
+
+  .stacy-msg.user {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    align-self: flex-end;
+  }
+
+  .stacy-input-row { display: flex; gap: 8px; }
+  .stacy-input-row input { flex: 1; }
+
+  /* INVOICE */
+  .invoice-preview {
+    background: #fff;
+    color: #111;
+    border-radius: 8px;
+    padding: 32px;
+    font-size: 13px;
+  }
+
+  .inv-header { display: flex; justify-content: space-between; margin-bottom: 28px; }
+  .inv-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: #00c896; }
+  .inv-meta { font-size: 11px; color: #666; line-height: 1.8; }
+  .inv-table th { background: #f5f5f5; }
+  .inv-table td, .inv-table th { border: 1px solid #e5e5e5; padding: 8px 12px; color: #111; }
+  .inv-total { text-align: right; margin-top: 16px; font-weight: 700; font-size: 15px; }
+
+  /* PRODUCT GRID */
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+  .product-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .product-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .product-card .pname { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .product-card .pprice { color: var(--accent); font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .product-card .pstock { font-size: 11px; color: var(--muted); }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 48px; color: var(--muted); }
+  .empty svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3; }
+  .empty p { font-size: 14px; }
+
+  /* SEARCH */
+  .search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+
+  .search-bar input { max-width: 260px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media print {
+    .sidebar, .main > *:not(.page.active) { display: none !important; }
+    .main { margin: 0; padding: 0; }
+    body { background: #fff; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">Stock<span>Easy</span></div>
+  <nav>
+    <div class="nav-item active" onclick="navigate('dashboard')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="navigate('products')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      Products
+    </div>
+    <div class="nav-item" onclick="navigate('sales')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      Record Sale
+    </div>
+    <div class="nav-item" onclick="navigate('history')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Sales History
+    </div>
+    <div class="nav-item" onclick="navigate('invoice')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Invoice
+    </div>
+    <div class="nav-item" onclick="navigate('reports')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Reports
+    </div>
+    <div class="nav-item" onclick="navigate('stacy')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+      Stacy AI
+    </div>
+  </nav>
+  <div class="sidebar-footer">StockEasy v1.0<br/>Stage 1 — Local</div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p id="dash-date"></p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="stat-label">Today's Revenue</div>
+        <div class="stat-value" id="stat-revenue">₦0</div>
+        <div class="stat-sub">From sales today</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">Products</div>
+        <div class="stat-value" id="stat-products">0</div>
+        <div class="stat-sub">In catalogue</div>
+      </div>
+      <div class="stat-card warn">
+        <div class="stat-label">Low Stock</div>
+        <div class="stat-value" id="stat-lowstock">0</div>
+        <div class="stat-sub">Items need restocking</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Sales</div>
+        <div class="stat-value" id="stat-sales">0</div>
+        <div class="stat-sub">All time transactions</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">Low Stock Alerts</div>
+        <div id="dash-alerts">
+          <div class="empty"><p>No alerts — all stock levels OK</p></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Recent Sales</div>
+        <div id="dash-recent">
+          <div class="empty"><p>No sales recorded yet</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="page" id="page-products">
+    <div class="page-header">
+      <h1>Product Catalogue</h1>
+      <p>Manage your inventory</p>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="product-search" placeholder="Search products..." oninput="renderProducts()"/>
+      <button class="btn btn-primary" onclick="openModal('modal-add-product')">+ Add Product</button>
+    </div>
+
+    <div class="panel">
+      <div id="product-list">
+        <div class="empty">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <p>No products yet. Add your first product.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SALES -->
+  <div class="page" id="page-sales">
+    <div class="page-header">
+      <h1>Record Sale</h1>
+      <p>Add items to cart and complete sale</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">Select Products</div>
+        <input type="text" id="sale-search" placeholder="Search products..." oninput="renderSaleProducts()" style="margin-bottom:14px"/>
+        <div class="product-grid" id="sale-product-grid">
+          <div class="empty" style="grid-column:1/-1"><p>No products available</p></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">
+          Cart
+          <span id="cart-count" class="badge badge-blue">0 items</span>
+        </div>
+        <div id="cart-items">
+          <div class="empty"><p>Cart is empty</p></div>
+        </div>
+        <div id="cart-footer" style="display:none; margin-top:14px; border-top:1px solid var(--border); padding-top:14px;">
+          <div style="display:flex;justify-content:space-between;font-weight:600;margin-bottom:10px;">
+            <span>Customer Name</span>
+          </div>
+          <input type="text" id="customer-name" placeholder="Enter customer name (optional)" style="margin-bottom:12px"/>
+          <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:700;margin-bottom:14px;">
+            <span>Total</span>
+            <span style="color:var(--accent)" id="cart-total">₦0</span>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="completeSale()">Complete Sale</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="page" id="page-history">
+    <div class="page-header">
+      <h1>Sales History</h1>
+      <p>All recorded transactions</p>
+    </div>
+    <div class="panel">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="history-tbody">
+          <tr><td colspan="5"><div class="empty"><p>No sales recorded yet</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- INVOICE -->
+  <div class="page" id="page-invoice">
+    <div class="page-header">
+      <h1>Invoice Generator</h1>
+      <p>Generate and print invoices for customers</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-title">Invoice Details</div>
+        <div class="form-group">
+          <label>Business Name</label>
+          <input type="text" id="inv-business" placeholder="Your Business Name" value="My Business"/>
+        </div>
+        <div class="form-group">
+          <label>Business Address</label>
+          <input type="text" id="inv-address" placeholder="e.g. 12 Allen Avenue, Lagos"/>
+        </div>
+        <div class="form-group">
+          <label>Customer Name</label>
+          <input type="text" id="inv-customer" placeholder="Customer Name"/>
+        </div>
+        <div class="form-group">
+          <label>Invoice Number</label>
+          <input type="text" id="inv-number" placeholder="INV-001"/>
+        </div>
+        <div class="form-group">
+          <label>Select Sale</label>
+          <select id="inv-sale-select" onchange="loadInvoiceSale()">
+            <option value="">-- Select a sale --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Note (optional)</label>
+          <textarea id="inv-note" placeholder="Thank you for your business!"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="generateInvoice()">Generate Invoice</button>
+      </div>
+
+      <div class="panel" id="invoice-output" style="display:none">
+        <div class="panel-title">Preview <button class="btn btn-sm btn-secondary" onclick="printInvoice()">🖨️ Print</button></div>
+        <div class="invoice-preview" id="invoice-print-area"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="page" id="page-reports">
+    <div class="page-header">
+      <h1>Reports</h1>
+      <p>Weekly sales performance</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="stat-label">This Week Revenue</div>
+        <div class="stat-value" id="rep-week-rev">₦0</div>
+        <div class="stat-sub">Last 7 days</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">This Week Sales</div>
+        <div class="stat-value" id="rep-week-sales">0</div>
+        <div class="stat-sub">Transactions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">All Time Revenue</div>
+        <div class="stat-value" id="rep-total-rev">₦0</div>
+        <div class="stat-sub">Since you started</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">All Time Sales</div>
+        <div class="stat-value" id="rep-total-sales">0</div>
+        <div class="stat-sub">Total transactions</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Weekly Sales Chart (Last 7 Days)</div>
+      <div class="chart-bars" id="weekly-chart"></div>
+    </div>
+
+    <div class="panel" style="margin-top:20px">
+      <div class="panel-title">Top Selling Products</div>
+      <table>
+        <thead><tr><th>Product</th><th>Units Sold</th><th>Revenue</th></tr></thead>
+        <tbody id="top-products-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- STACY AI -->
+  <div class="page" id="page-stacy">
+    <div class="page-header">
+      <h1>Stacy — AI Business Advisor</h1>
+      <p>Ask Stacy anything about your business performance</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel" style="grid-column:1/-1; max-width:700px">
+        <div class="panel-title">Chat with Stacy</div>
+        <div class="stacy-chat" id="stacy-chat">
+          <div class="stacy-msg bot">
+            👋 Hi! I'm <strong>Stacy</strong>, your AI business advisor. Ask me anything — sales performance, stock advice, pricing tips, or business strategy. I have access to your current business data!
+          </div>
+        </div>
+        <div class="stacy-input-row">
+          <input type="text" id="stacy-input" placeholder="Ask Stacy anything..." onkeydown="if(event.key==='Enter') sendStacy()"/>
+          <button class="btn btn-primary" onclick="sendStacy()">Send</button>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="stacyQuick('How are my sales doing this week?')">Sales this week</button>
+          <button class="btn btn-secondary btn-sm" onclick="stacyQuick('Which products are running low?')">Low stock</button>
+          <button class="btn btn-secondary btn-sm" onclick="stacyQuick('What is my best selling product?')">Best seller</button>
+          <button class="btn btn-secondary btn-sm" onclick="stacyQuick('Give me business tips to increase revenue')">Revenue tips</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- MODALS -->
+
+<!-- Add Product Modal -->
+<div class="modal-overlay" id="modal-add-product">
+  <div class="modal">
+    <div class="modal-title">Add New Product</div>
+    <div class="form-group">
+      <label>Product Name *</label>
+      <input type="text" id="new-product-name" placeholder="e.g. Indomie Noodles"/>
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <input type="text" id="new-product-category" placeholder="e.g. Food, Electronics"/>
+    </div>
+    <div class="form-group">
+      <label>Selling Price (₦) *</label>
+      <input type="number" id="new-product-price" placeholder="0"/>
+    </div>
+    <div class="form-group">
+      <label>Cost Price (₦)</label>
+      <input type="number" id="new-product-cost" placeholder="0"/>
+    </div>
+    <div class="form-group">
+      <label>Stock Quantity *</label>
+      <input type="number" id="new-product-stock" placeholder="0"/>
+    </div>
+    <div class="form-group">
+      <label>Low Stock Alert Threshold</label>
+      <input type="number" id="new-product-threshold" placeholder="5" value="5"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-product')">Cancel</button>
+      <button class="btn btn-primary" onclick="addProduct()">Add Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div class="modal-overlay" id="modal-edit-product">
+  <div class="modal">
+    <div class="modal-title">Edit Product</div>
+    <input type="hidden" id="edit-product-id"/>
+    <div class="form-group"><label>Product Name</label><input type="text" id="edit-product-name"/></div>
+    <div class="form-group"><label>Category</label><input type="text" id="edit-product-category"/></div>
+    <div class="form-group"><label>Selling Price (₦)</label><input type="number" id="edit-product-price"/></div>
+    <div class="form-group"><label>Cost Price (₦)</label><input type="number" id="edit-product-cost"/></div>
+    <div class="form-group"><label>Stock Quantity</label><input type="number" id="edit-product-stock"/></div>
+    <div class="form-group"><label>Low Stock Threshold</label><input type="number" id="edit-product-threshold"/></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-product')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditProduct()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sale Success Modal -->
+<div class="modal-overlay" id="modal-sale-success">
+  <div class="modal" style="text-align:center; max-width:360px">
+    <div style="font-size:48px;margin-bottom:12px">✅</div>
+    <div class="modal-title">Sale Recorded!</div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:8px">Total: <strong id="success-total" style="color:var(--accent)"></strong></p>
+    <p style="color:var(--muted);font-size:13px" id="success-customer"></p>
+    <div class="modal-actions" style="justify-content:center;margin-top:20px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-sale-success')">Close</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-sale-success'); navigate('invoice')">Generate Invoice</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== DATA ==========
+let products = JSON.parse(localStorage.getItem('se_products') || '[]');
+let sales = JSON.parse(localStorage.getItem('se_sales') || '[]');
+let cart = [];
+
+function save() {
+  localStorage.setItem('se_products', JSON.stringify(products));
+  localStorage.setItem('se_sales', JSON.stringify(sales));
+}
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
+function fmt(n) {
+  return '₦' + Number(n).toLocaleString('en-NG');
+}
+
+// ========== NAVIGATION ==========
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick')?.includes(page)) n.classList.add('active');
+  });
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'products') renderProducts();
+  if (page === 'sales') renderSaleProducts();
+  if (page === 'history') renderHistory();
+  if (page === 'reports') renderReports();
+  if (page === 'invoice') renderInvoiceSelect();
+}
+
+// ========== MODALS ==========
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ========== DASHBOARD ==========
+function renderDashboard() {
+  const today = new Date().toDateString();
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-NG', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const todaySales = sales.filter(s => new Date(s.date).toDateString() === today);
+  const todayRev = todaySales.reduce((a, s) => a + s.total, 0);
+  document.getElementById('stat-revenue').textContent = fmt(todayRev);
+  document.getElementById('stat-products').textContent = products.length;
+  document.getElementById('stat-sales').textContent = sales.length;
+
+  const lowStock = products.filter(p => p.stock <= p.threshold);
+  document.getElementById('stat-lowstock').textContent = lowStock.length;
+
+  const alertsEl = document.getElementById('dash-alerts');
+  if (lowStock.length === 0) {
+    alertsEl.innerHTML = '<div class="empty"><p>No alerts — all stock levels OK ✅</p></div>';
+  } else {
+    alertsEl.innerHTML = lowStock.map(p =>
+      `<div class="alert ${p.stock === 0 ? 'alert-danger' : 'alert-warn'}">
+        <strong>${p.name}</strong> — ${p.stock === 0 ? 'OUT OF STOCK' : p.stock + ' units left'}
+      </div>`
+    ).join('');
+  }
+
+  const recentEl = document.getElementById('dash-recent');
+  const recent = [...sales].reverse().slice(0, 5);
+  if (recent.length === 0) {
+    recentEl.innerHTML = '<div class="empty"><p>No sales yet</p></div>';
+  } else {
+    recentEl.innerHTML = recent.map(s =>
+      `<div class="cart-item">
+        <div>
+          <div style="font-weight:600;font-size:13px">${s.customer || 'Walk-in'}</div>
+          <div style="font-size:11px;color:var(--muted)">${new Date(s.date).toLocaleDateString()}</div>
+        </div>
+        <div style="color:var(--accent);font-weight:700">${fmt(s.total)}</div>
+      </div>`
+    ).join('');
+  }
+}
+
+// ========== PRODUCTS ==========
+function renderProducts() {
+  const q = (document.getElementById('product-search')?.value || '').toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q));
+  const el = document.getElementById('product-list');
+
+  if (filtered.length === 0) {
+    el.innerHTML = `<div class="empty">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      <p>${products.length === 0 ? 'No products yet. Add your first product.' : 'No products match your search.'}</p>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = `<table>
+    <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Cost</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      ${filtered.map(p => {
+        const status = p.stock === 0 ? '<span class="badge badge-danger">Out of Stock</span>'
+          : p.stock <= p.threshold ? '<span class="badge badge-warn">Low Stock</span>'
+          : '<span class="badge badge-green">In Stock</span>';
+        return `<tr>
+          <td><strong>${p.name}</strong></td>
+          <td><span style="color:var(--muted)">${p.category || '—'}</span></td>
+          <td>${fmt(p.price)}</td>
+          <td>${p.cost ? fmt(p.cost) : '—'}</td>
+          <td>${p.stock}</td>
+          <td>${status}</td>
+          <td>
+            <button class="btn btn-sm btn-secondary" onclick="editProduct('${p.id}')">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')" style="margin-left:6px">Delete</button>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+}
+
+function addProduct() {
+  const name = document.getElementById('new-product-name').value.trim();
+  const price = parseFloat(document.getElementById('new-product-price').value);
+  const stock = parseInt(document.getElementById('new-product-stock').value);
+  if (!name || isNaN(price) || isNaN(stock)) { alert('Please fill in Name, Price and Stock.'); return; }
+
+  products.push({
+    id: genId(),
+    name,
+    category: document.getElementById('new-product-category').value.trim(),
+    price,
+    cost: parseFloat(document.getElementById('new-product-cost').value) || 0,
+    stock,
+    threshold: parseInt(document.getElementById('new-product-threshold').value) || 5
+  });
+  save();
+  closeModal('modal-add-product');
+  document.getElementById('new-product-name').value = '';
+  document.getElementById('new-product-price').value = '';
+  document.getElementById('new-product-stock').value = '';
+  document.getElementById('new-product-category').value = '';
+  document.getElementById('new-product-cost').value = '';
+  renderProducts();
+}
+
+function editProduct(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('edit-product-id').value = p.id;
+  document.getElementById('edit-product-name').value = p.name;
+  document.getElementById('edit-product-category').value = p.category || '';
+  document.getElementById('edit-product-price').value = p.price;
+  document.getElementById('edit-product-cost').value = p.cost || '';
+  document.getElementById('edit-product-stock').value = p.stock;
+  document.getElementById('edit-product-threshold').value = p.threshold;
+  openModal('modal-edit-product');
+}
+
+function saveEditProduct() {
+  const id = document.getElementById('edit-product-id').value;
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  p.name = document.getElementById('edit-product-name').value.trim();
+  p.category = document.getElementById('edit-product-category').value.trim();
+  p.price = parseFloat(document.getElementById('edit-product-price').value) || p.price;
+  p.cost = parseFloat(document.getElementById('edit-product-cost').value) || 0;
+  p.stock = parseInt(document.getElementById('edit-product-stock').value) || 0;
+  p.threshold = parseInt(document.getElementById('edit-product-threshold').value) || 5;
+  save();
+  closeModal('modal-edit-product');
+  renderProducts();
+}
+
+function deleteProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  products = products.filter(p => p.id !== id);
+  save();
+  renderProducts();
+}
+
+// ========== SALES ==========
+function renderSaleProducts() {
+  const q = (document.getElementById('sale-search')?.value || '').toLowerCase();
+  const filtered = products.filter(p => p.stock > 0 && (p.name.toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q)));
+  const el = document.getElementById('sale-product-grid');
+
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty" style="grid-column:1/-1"><p>No products available</p></div>';
+    return;
+  }
+
+  el.innerHTML = filtered.map(p =>
+    `<div class="product-card" onclick="addToCart('${p.id}')">
+      <div class="pname">${p.name}</div>
+      <div class="pprice">${fmt(p.price)}</div>
+      <div class="pstock">${p.stock} in stock</div>
+    </div>`
+  ).join('');
+}
+
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const existing = cart.find(c => c.id === id);
+  if (existing) {
+    if (existing.qty >= p.stock) { alert('Not enough stock!'); return; }
+    existing.qty++;
+  } else {
+    cart.push({ id: p.id, name: p.name, price: p.price, qty: 1 });
+  }
+  renderCart();
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(c => c.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+  renderCart();
+}
+
+function renderCart() {
+  const el = document.getElementById('cart-items');
+  const footer = document.getElementById('cart-footer');
+  const countEl = document.getElementById('cart-count');
+
+  if (cart.length === 0) {
+    el.innerHTML = '<div class="empty"><p>Cart is empty</p></div>';
+    footer.style.display = 'none';
+    countEl.textContent = '0 items';
+    return;
+  }
+
+  const total = cart.reduce((a, c) => a + c.price * c.qty, 0);
+  countEl.textContent = cart.length + ' items';
+  el.innerHTML = cart.map(c =>
+    `<div class="cart-item">
+      <div>
+        <div style="font-weight:600;font-size:13px">${c.name}</div>
+        <div style="font-size:12px;color:var(--muted)">${fmt(c.price)} each</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="cart-qty">
+          <button class="qty-btn" onclick="changeQty('${c.id}', -1)">−</button>
+          <span>${c.qty}</span>
+          <button class="qty-btn" onclick="changeQty('${c.id}', 1)">+</button>
+        </div>
+        <div style="font-weight:700;min-width:70px;text-align:right">${fmt(c.price * c.qty)}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  document.getElementById('cart-total').textContent = fmt(total);
+  footer.style.display = 'block';
+}
+
+function completeSale() {
+  if (cart.length === 0) return;
+  const total = cart.reduce((a, c) => a + c.price * c.qty, 0);
+  const customer = document.getElementById('customer-name').value.trim() || 'Walk-in';
+
+  // Deduct stock
+  cart.forEach(c => {
+    const p = products.find(x => x.id === c.id);
+    if (p) p.stock -= c.qty;
+  });
+
+  const sale = {
+    id: genId(),
+    date: new Date().toISOString(),
+    customer,
+    items: [...cart],
+    total
+  };
+  sales.push(sale);
+  save();
+
+  document.getElementById('success-total').textContent = fmt(total);
+  document.getElementById('success-customer').textContent = customer !== 'Walk-in' ? 'Customer: ' + customer : '';
+  openModal('modal-sale-success');
+
+  cart = [];
+  document.getElementById('customer-name').value = '';
+  renderCart();
+  renderSaleProducts();
+}
+
+// ========== HISTORY ==========
+function renderHistory() {
+  const tbody = document.getElementById('history-tbody');
+  if (sales.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><p>No sales recorded yet</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = [...sales].reverse().map(s =>
+    `<tr>
+      <td>${new Date(s.date).toLocaleDateString('en-NG', {day:'2-digit',month:'short',year:'numeric'})}</td>
+      <td>${s.customer}</td>
+      <td>${s.items.map(i => i.name + ' x' + i.qty).join(', ')}</td>
+      <td style="color:var(--accent);font-weight:700">${fmt(s.total)}</td>
+      <td><button class="btn btn-sm btn-secondary" onclick="loadSaleToInvoice('${s.id}')">Invoice</button></td>
+    </tr>`
+  ).join('');
+}
+
+function loadSaleToInvoice(id) {
+  navigate('invoice');
+  setTimeout(() => {
+    document.getElementById('inv-sale-select').value = id;
+    loadInvoiceSale();
+  }, 100);
+}
+
+// ========== INVOICE ==========
+function renderInvoiceSelect() {
+  const sel = document.getElementById('inv-sale-select');
+  sel.innerHTML = '<option value="">-- Select a sale --</option>' +
+    [...sales].reverse().map(s =>
+      `<option value="${s.id}">${new Date(s.date).toLocaleDateString()} — ${s.customer} — ${fmt(s.total)}</option>`
+    ).join('');
+
+  // Auto-fill invoice number
+  document.getElementById('inv-number').value = 'INV-' + String(sales.length + 1).padStart(3, '0');
+}
+
+function loadInvoiceSale() {
+  const id = document.getElementById('inv-sale-select').value;
+  const s = sales.find(x => x.id === id);
+  if (s) {
+    document.getElementById('inv-customer').value = s.customer;
+  }
+}
+
+function generateInvoice() {
+  const saleId = document.getElementById('inv-sale-select').value;
+  const sale = sales.find(s => s.id === saleId);
+  const business = document.getElementById('inv-business').value || 'My Business';
+  const address = document.getElementById('inv-address').value || '';
+  const customer = document.getElementById('inv-customer').value || 'Customer';
+  const invNum = document.getElementById('inv-number').value || 'INV-001';
+  const note = document.getElementById('inv-note').value || 'Thank you for your business!';
+
+  const items = sale ? sale.items : [];
+  const total = sale ? sale.total : 0;
+
+  const rows = items.map(i =>
+    `<tr>
+      <td>${i.name}</td>
+      <td style="text-align:center">${i.qty}</td>
+      <td style="text-align:right">${fmt(i.price)}</td>
+      <td style="text-align:right">${fmt(i.price * i.qty)}</td>
+    </tr>`
+  ).join('');
+
+  document.getElementById('invoice-print-area').innerHTML = `
+    <div class="inv-header">
+      <div>
+        <div class="inv-title">${business}</div>
+        <div class="inv-meta">${address}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="inv-meta">Invoice No: <strong>${invNum}</strong><br/>
+        Date: ${new Date().toLocaleDateString('en-NG')}<br/>
+        Bill To: <strong>${customer}</strong></div>
+      </div>
+    </div>
+    <table class="inv-table" style="width:100%;border-collapse:collapse">
+      <thead><tr><th>Item</th><th style="text-align:center">Qty</th><th style="text-align:right">Unit Price</th><th style="text-align:right">Amount</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="4" style="text-align:center;color:#999;padding:20px">No items</td></tr>'}</tbody>
+    </table>
+    <div class="inv-total">Total: ${fmt(total)}</div>
+    ${note ? `<div style="margin-top:20px;color:#666;font-size:12px;border-top:1px solid #eee;padding-top:12px">${note}</div>` : ''}
+  `;
+
+  document.getElementById('invoice-output').style.display = 'block';
+}
+
+function printInvoice() {
+  window.print();
+}
+
+// ========== REPORTS ==========
+function renderReports() {
+  const now = new Date();
+  const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+  const weekSales = sales.filter(s => new Date(s.date) >= weekAgo);
+
+  document.getElementById('rep-week-rev').textContent = fmt(weekSales.reduce((a, s) => a + s.total, 0));
+  document.getElementById('rep-week-sales').textContent = weekSales.length;
+  document.getElementById('rep-total-rev').textContent = fmt(sales.reduce((a, s) => a + s.total, 0));
+  document.getElementById('rep-total-sales').textContent = sales.length;
+
+  // Weekly chart
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const label = d.toLocaleDateString('en-NG', { weekday: 'short' });
+    const dayStr = d.toDateString();
+    const rev = sales.filter(s => new Date(s.date).toDateString() === dayStr).reduce((a, s) => a + s.total, 0);
+    days.push({ label, rev });
+  }
+
+  const maxRev = Math.max(...days.map(d => d.rev), 1);
+  document.getElementById('weekly-chart').innerHTML = days.map(d =>
+    `<div class="chart-bar-wrap">
+      <div class="chart-bar" style="height:${Math.round((d.rev / maxRev) * 100)}px" title="${fmt(d.rev)}"></div>
+      <div class="chart-label">${d.label}</div>
+    </div>`
+  ).join('');
+
+  // Top products
+  const productSales = {};
+  sales.forEach(s => {
+    s.items.forEach(i => {
+      if (!productSales[i.name]) productSales[i.name] = { units: 0, revenue: 0 };
+      productSales[i.name].units += i.qty;
+      productSales[i.name].revenue += i.price * i.qty;
+    });
+  });
+
+  const sorted = Object.entries(productSales).sort((a, b) => b[1].revenue - a[1].revenue).slice(0, 10);
+  const tbody = document.getElementById('top-products-tbody');
+  if (sorted.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3"><div class="empty"><p>No sales data yet</p></div></td></tr>';
+  } else {
+    tbody.innerHTML = sorted.map(([name, data]) =>
+      `<tr><td><strong>${name}</strong></td><td>${data.units}</td><td style="color:var(--accent);font-weight:700">${fmt(data.revenue)}</td></tr>`
+    ).join('');
+  }
+}
+
+// ========== STACY AI ==========
+async function sendStacy() {
+  const input = document.getElementById('stacy-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendStacyMsg(msg, 'user');
+
+  const businessData = {
+    products: products.map(p => ({ name: p.name, price: p.price, stock: p.stock, threshold: p.threshold, category: p.category })),
+    totalSales: sales.length,
+    totalRevenue: sales.reduce((a, s) => a + s.total, 0),
+    todayRevenue: sales.filter(s => new Date(s.date).toDateString() === new Date().toDateString()).reduce((a, s) => a + s.total, 0),
+    lowStockProducts: products.filter(p => p.stock <= p.threshold).map(p => p.name),
+    recentSales: sales.slice(-5).map(s => ({ customer: s.customer, total: s.total, date: s.date, items: s.items }))
+  };
+
+  const typing = appendStacyMsg('Stacy is thinking...', 'bot', true);
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are Stacy, a friendly and sharp AI business advisor for Nigerian SME owners using StockEasy. 
+You give concise, practical, and actionable business advice. 
+You speak in a warm but professional tone — like a smart business friend who understands the Nigerian market.
+You have access to the user's live business data below. Use it to give specific, data-driven advice.
+
+BUSINESS DATA:
+${JSON.stringify(businessData, null, 2)}
+
+Keep responses short (3-5 sentences max unless data analysis is needed). 
+Mention specific product names, revenue numbers, and stock levels from the data when relevant.
+Always end with one actionable tip or question.`,
+        messages: [{ role: 'user', content: msg }]
+      })
+    });
+
+    const data = await response.json();
+    typing.remove();
+    const reply = data.content?.[0]?.text || 'Sorry, I could not get a response. Please try again.';
+    appendStacyMsg(reply, 'bot');
+  } catch (e) {
+    typing.remove();
+    appendStacyMsg('Network error. Please check your connection and try again.', 'bot');
+  }
+}
+
+function appendStacyMsg(text, role, isTyping = false) {
+  const chat = document.getElementById('stacy-chat');
+  const div = document.createElement('div');
+  div.className = 'stacy-msg ' + role;
+  div.textContent = text;
+  if (isTyping) div.style.opacity = '0.5';
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function stacyQuick(text) {
+  document.getElementById('stacy-input').value = text;
+  sendStacy();
+}
+
+// ========== INIT ==========
+renderDashboard();
+</script>
+</body>
+</html>
