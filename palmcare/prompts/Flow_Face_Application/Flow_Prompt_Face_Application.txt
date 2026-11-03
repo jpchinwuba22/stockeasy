@@ -1,0 +1,11 @@
+PALMCARE VITAMIN C - FACE APPLICATION CLIP (Google Flow)
+
+Mode: Ingredients to Video (or Frames to Video)
+Reference image: 02_Model_Face_Portrait.jpg  (use 01_Model_Full_Reference.jpg if you need the full look)
+Aspect: 9:16 vertical | Length: 8 s | Model: Veo 3 (Quality) | Audio: off
+
+PROMPT
+Vertical 9:16 close-up beauty shot of the same young Black woman from the reference image: deep brown skin with natural freckles, long dark wavy hair parted in the middle, small gold hoop earrings, white off-shoulder top. Warm golden studio light, soft cream-to-peach backdrop with blurred orange slices, exactly like the reference. She raises one hand into frame with a small dollop of white face cream on her fingertip, gently dots it onto her cheek, then slowly blends it in with soft circular motions, eyes relaxed and half closed, a calm confident smile at the end. The cream melts into her skin, leaving a healthy dewy glow. Her skin tone stays exactly the same as the reference, never lighter. Slow, smooth push-in camera, shallow depth of field, photorealistic, natural skin texture, cinematic skincare commercial.
+
+NEGATIVE / AVOID
+No product jar or box in frame, no text, no logos, no captions, no extra people, no lightening of the skin, no distorted hands or extra fingers, no makeup change, no hair change.
