@@ -1,0 +1,83 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=Mrs+Saint+Delafield&display=block" rel="stylesheet">
+<style>
+:root{--bg:#FF4B1F;--ink:#120C24;--cream:#FFF1DC;--yellow:#FFD400;--blue:#2A3BFF;--green:#22C55E}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1920px;background:var(--bg);font-family:Archivo;overflow:hidden;position:relative;color:var(--ink)}
+.grain{position:absolute;inset:0;z-index:50;pointer-events:none;opacity:.14;mix-blend-mode:multiply;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>")}
+.big{position:absolute;right:-30px;top:150px;font:400 940px/0.8 Anton;color:#D8330C;letter-spacing:-10px;z-index:1}
+.man{position:absolute;right:-90px;top:378px;width:760px;z-index:3;filter:drop-shadow(-22px 0 0 var(--blue))}
+header{position:absolute;left:50px;top:50px;z-index:5;display:flex;align-items:center;gap:20px}
+.mono{width:92px;height:92px;background:var(--ink);color:var(--yellow);font:400 50px/92px Anton;text-align:center;letter-spacing:1px}
+.wm{font:900 44px/1 Archivo;letter-spacing:-.5px;color:var(--ink)}
+.wm b{color:var(--cream)}
+.cbg{font:800 19px Archivo;letter-spacing:7px;margin-top:10px}
+.tags{position:absolute;left:50px;top:176px;z-index:5;font:800 21px Archivo;letter-spacing:2px;color:var(--ink)}
+.tags i{font-style:normal;margin:0 8px;opacity:.5}
+.hl{position:absolute;left:48px;top:262px;z-index:6}
+.pre{font:800 30px Archivo;letter-spacing:4px;color:var(--cream);background:var(--ink);display:inline-block;padding:9px 16px 8px}
+.l1,.l2{font:400 128px/0.9 Anton;letter-spacing:-1px}
+.l1{color:var(--ink);margin-top:16px}
+.l2{color:var(--cream)}
+.l2 span{color:var(--yellow)}
+.l3{font:400 72px/1 Anton;color:var(--ink);margin-top:12px;letter-spacing:.5px}
+.body{position:absolute;left:50px;top:700px;width:400px;font:700 27px/1.4 Archivo;color:var(--ink);z-index:4;border-left:6px solid var(--ink);padding-left:20px}
+.panel{position:absolute;left:0;top:1024px;width:1080px;height:896px;background:var(--ink);z-index:4;padding:34px 50px 0;color:var(--cream)}
+.ph{display:flex;align-items:center;gap:20px}
+.ph h3{font:400 64px/1 Anton;color:var(--yellow);letter-spacing:1px}
+.ph .rule{flex:1;height:3px;background:rgba(255,241,220,.3)}
+.list{display:grid;grid-template-columns:1fr 1fr;column-gap:40px;margin-top:8px}
+.it{display:flex;gap:14px;padding:12px 0 12px;border-bottom:2px solid rgba(255,241,220,.2)}
+.it .n{font:400 44px/1 Anton;color:var(--bg);width:52px;flex:none}
+.it h4{font:900 25px/1.1 Archivo;letter-spacing:.3px;color:#fff}
+.it p{font:500 20px/1.32 Archivo;color:rgba(255,241,220,.85);margin-top:6px}
+.vals{display:grid;grid-template-columns:1fr 1fr;row-gap:12px;margin-top:20px;font:800 22px Archivo;letter-spacing:1.5px;color:var(--cream)}
+.vals span{display:flex;align-items:center;gap:12px}
+.vals span:before{content:"";width:13px;height:13px;background:var(--yellow);transform:rotate(45deg);flex:none}
+.cta{position:absolute;left:0;bottom:150px;width:1080px;height:178px;background:var(--yellow);z-index:5;display:flex;align-items:center;padding:0 50px;gap:24px}
+.wa{width:104px;height:104px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;flex:none}
+.wa svg{width:58px;height:58px;fill:#fff}
+.lw{font:900 22px Archivo;letter-spacing:5px}
+.num{font:400 84px/0.95 Anton;letter-spacing:1px;margin-top:6px}
+.msg{margin-left:auto;width:262px;font:700 21px/1.3 Archivo;color:var(--ink)}
+.foot{position:absolute;left:50px;right:50px;bottom:14px;height:130px;z-index:5;display:flex;justify-content:space-between;align-items:center;color:var(--cream)}
+.sig{font:400 76px/0.9 'Mrs Saint Delafield';color:#fff}
+.role{font:800 17px Archivo;letter-spacing:1.6px;color:rgba(255,241,220,.85);margin-top:12px}
+.tag2{font:italic 44px/1.02 'Instrument Serif';text-align:right;color:var(--cream)}
+.tag2 b{font-weight:400;color:var(--yellow)}
+</style></head><body>
+<div class="big">AI</div>
+<img class="man" src="photos/real_rich.png">
+<header><div class="mono">JP</div><div><div class="wm">Johnpaul <b>AI</b> Studio</div><div class="cbg">CREATE · BUILD · GROW</div></div></header>
+<div class="tags">AI<i>/</i>CONTENT<i>/</i>ADS<i>/</i>WEBSITES<i>/</i>DIGITAL PRODUCTS</div>
+<div class="hl">
+  <div class="pre">TURN YOUR IDEAS INTO</div>
+  <div class="l1">POWERFUL</div>
+  <div class="l2"><span>AI</span> SOLUTIONS</div>
+  <div class="l3">FOR REAL GROWTH</div>
+</div>
+<div class="body">I help businesses, creators and individuals use AI and digital marketing to work smarter, reach more people and increase revenue.</div>
+<div class="panel">
+  <div class="ph"><h3>MY SERVICES</h3><div class="rule"></div></div>
+  <div class="list">
+    <div class="it"><div class="n">01</div><div><h4>META ADS</h4><p>Get real customers, boost sales and grow your brand with targeted Meta ads.</p></div></div>
+    <div class="it"><div class="n">02</div><div><h4>AI ADS VIDEO CREATION</h4><p>High converting AI videos for products, services and brands.</p></div></div>
+    <div class="it"><div class="n">03</div><div><h4>AI WEBSITES</h4><p>Modern, fast and conversion focused websites built with AI.</p></div></div>
+    <div class="it"><div class="n">04</div><div><h4>AI AUTOMATION</h4><p>Save time, reduce manual work and improve efficiency with smart automation.</p></div></div>
+    <div class="it"><div class="n">05</div><div><h4>AI CONTENT</h4><p>Engaging content, scripts, blogs and creatives powered by AI.</p></div></div>
+    <div class="it"><div class="n">06</div><div><h4>AI TRAINING &amp; TUTORING</h4><p>Learn AI step by step, even as a beginner. Practical, hands on and real world focused.</p></div></div>
+  </div>
+  <div class="vals"><span>PROVEN STRATEGIES</span><span>FAST TURNAROUND</span><span>PERSONALIZED SUPPORT</span><span>RESULTS DRIVEN</span></div>
+</div>
+<div class="cta">
+  <div class="wa"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
+  <div><div class="lw">LET'S WORK TOGETHER</div><div class="num">+2349031675011</div></div>
+  <div class="msg">Send me a message on WhatsApp today and let's bring your ideas to life.</div>
+</div>
+<div class="foot">
+  <div><div class="sig">Johnpaul Chinwuba</div><div class="role">AI CREATOR | DIGITAL MARKETER | AUTOMATION SPECIALIST</div></div>
+  <div class="tag2">Smarter Tools.<br><b>Bigger Possibilities.</b></div>
+</div>
+<div class="grain"></div>
+</body></html>
